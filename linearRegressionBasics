@@ -1,0 +1,72 @@
+'''
+Sample Linear Regression project which we provide data sample manually
+Author- Edirisooriya D M B
+Date- 27/09/2024
+'''
+
+#Importing libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+#Import sample data you want to analyse here as features and labels
+
+# features
+x=input("Input your feature values separated by a comma: ")
+x_train=list(map(float,x.split(',')))
+x_train=np.array(x_train)
+# labels
+y=input("Input your label values separated by a comma: ")
+y_train=list(map(float,y.split(',')))
+y_train=np.array(y_train)
+
+df=pd.DataFrame({'x':x_train,'y':y_train})
+print(df)
+print(x_train)
+print(y_train)
+
+#Defining a cost function
+def cost_function(w,b,x,y):
+  l=len(x)
+  total=0
+  for i in range(l):
+    f_wb=w*x[i]+b
+    cost=(f_wb-y[i]**2)
+    total=total+cost
+  total=total/(2*l)
+  return total
+
+#Define a function to compute the gradient
+def compute_gradient(x,y,w,b):
+  m=len(x)
+  dj_dw=0
+  dj_db=0
+  for i in range(m):
+    f_wb=w*x[i]+b
+    dj_dw_i=(f_wb-y[i])*x[i]
+    dj_db_i=(f_wb-y[i])
+    dj_dw=dj_dw+dj_dw_i
+    dj_db=dj_db+dj_db_i
+  return dj_dw/m,dj_db/m
+
+#Define a function to compute the gradient descent
+def gradient_descent(x,y,w_in,b_in,alpha,num_iters,cost_function,compute_gradient):
+  dj_dw=0
+  dj_db=0
+  w=w_in
+  b=b_in
+  for i in range(num_iters):
+    dj_dw,dj_db=compute_gradient(x,y,w,b)
+    w=w-alpha*dj_dw
+    b=b-alpha*dj_db
+  return w,b
+
+m,c=gradient_descent(x_train,y_train,5,2,1.0e-2,100000,cost_function,compute_gradient)
+print(m,c)
+# Data visualization
+x = np.linspace(0, 10, 100)
+y = m * x + c
+plt.plot(x, y,'r')
+plt.scatter(x_train,y_train)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
